@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 const program = require('commander');
+const GetTopWebsites = require('./helper/parser');
 
+// Basic setup for a node cli
 program
     .version('0.0.1')
     .name('clawer')
@@ -9,21 +11,35 @@ program
     .option('-c, country', 'A country name is required.')
     .parse(process.argv);
 
+
+/**
+ * exitProgram: a function to send error message and tips to the user, and then exit the process.
+ * @param {string} errMessage - an error message presents to user.
+ */
 function exitProgram(errMessage) {
-    // Output directions and exit the program.
     errMessage = errMessage || 'Please input a valid action.';
     console.error(errMessage);
     program.outputHelp();
     process.exit(); 
 }
 
-const action = program.args[0];
+/**
+ * capitalizeFirstLetter: a function transform the user input. Capitalize only the first character and lower the rest of the characters.
+ * @param {string} str - an string entered by the user.
+ */
+function capitalizeFirstLetter(str) {
+    return str[0].toUpperCase() + str.slice(1).toLowerCase();
+}
+
+
+const action = process.argv[2] || program.args[0];
 let errorMessage;
 
 switch (action) {
+    // show top <number> sites URL if the action is "top" or "-t"
     case "top":
     case "-t":
-        let number = Number(program.args[1]);
+        let number = Number(process.argv[3] || program.args[1]);
         if (typeof number !== "number" || isNaN(number)) {
             errorMessage = 'Invalid argument.';
             exitProgram(errorMessage);
@@ -31,13 +47,23 @@ switch (action) {
             errorMessage = 'Only accepts number from 1 to 50.';
             exitProgram(errorMessage);
         } else {
-            console.log(`current action is ${action}, and number is ${number}`);
+            GetTopWebsites.certainAmount(number);
         }
         break;
+
+    // show top 20 sites URL by country if the action is "country" or "-c"
     case "country":
     case "-c":
-        console.log(`current action is ${action}`);
+        let country = process.argv[3] || program.args[1];
+        if (!country) {
+            errorMessage = 'Argument required.';
+            exitProgram(errorMessage);
+        } else {
+            country = capitalizeFirstLetter(country);
+            GetTopWebsites.topWebsitesByCountry(country);
+        }
         break;    
+
     default:
         exitProgram();
         break;
