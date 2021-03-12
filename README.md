@@ -1,8 +1,5 @@
 # Clawer
-This repository is for Q4 only.
-
-## Overview
-Clawer is a web scraping CLI built via Node.js, used to parse certain information from [Alexa](www.alexa.com) and only.
+A web scraping CLI built via Node.js, used to parse certain information from [Alexa](www.alexa.com) and only.
 
 ## Setup
 To run this project, download the code and install it locally using npm:
